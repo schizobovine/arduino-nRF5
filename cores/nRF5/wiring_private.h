@@ -28,18 +28,28 @@ extern "C" {
 
 #include "wiring_constants.h"
 
-#define PWM_COUNT 3
-#define PWM_TIMER_COUNT 1 // 3 channels of TIMER1 are used. TIMER2 also could be used for PWM
+#ifdef NRF52
+#define PWM_COUNT 12
+#define PWM_MODULE_COUNT 3 // 3 PWM modules
+#define PWM_CHANNEL_COUNT 4 // 4 channels per PWM module
+#else
+#define PWM_COUNT 6
+#define PWM_MODULE_COUNT 2 // 2 TIMER modules (1,2) are used. TIMER0 is used by the softdevice
+#define PWM_CHANNEL_COUNT 3 // 4 channels per TIMER module. Channel 0 is used for setting the PWM signal HIGH, so only 3 are available
+#endif
+
+
 #define PIN_FREE 0xffffffff
 
 struct PWMContext {
   uint32_t pin;
-  uint32_t value;
   #ifdef NRF51
-  uint32_t channel;
+  uint32_t value;
   uint32_t mask;
   uint32_t event;
   #endif
+  uint32_t channel;
+  uint32_t module;
 };
 
 struct PWMStatus {
